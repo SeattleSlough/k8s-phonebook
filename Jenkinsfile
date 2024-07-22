@@ -6,7 +6,7 @@ pipeline {
         AWS_ACCOUNT_ID=sh(script:'aws sts get-caller-identity --query Account --output text', returnStdout:true).trim()
         AWS_REGION="us-east-1"
         ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        CLUSTER_URL="https://172.31.32.78:6443"
+        CLUSTER_URL="https://172.31.74.113:6443"
     }
   stages {
     stage('Create ECR Repo') {
@@ -52,7 +52,7 @@ pipeline {
             --from-file=.dockerconfigjson=/var/lib/jenkins/.docker/config.json \
             --type=kubernetes.io/dockerconfigjson
           sed -i "s|IMAGE_TAG_WEB_SERVER|${ECR_REGISTRY}/${APP_REPO_NAME}:web-b${BUILD_NUMBER}|" k8s/webserver-deploy.yaml
-          sed -i "s|IMAGE_TAG_RESULT_SERVER|${ECR_REGISTRY}/${APP_REPO_NAME}:result-b${BUILD_NUMBER}|" k8s/resultserver-deploy.yaml          
+          sed -i "s|IMAGE_TAG_RESULT_SERVER|${ECR_REGISTRY}/${APP_REPO_NAME}:result-b${BUILD_NUMBER}|" k8s/resultserver-deploy.yaml
           kubectl apply -f k8s
           '''
         }
